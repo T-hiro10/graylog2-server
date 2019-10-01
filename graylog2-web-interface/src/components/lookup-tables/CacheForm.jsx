@@ -203,7 +203,7 @@ class CacheForm extends React.Component {
         validationState: this._validationState,
       });
       if (p.documentationComponent) {
-        documentationComponent = React.createElement(p.documentationComponent);
+        documentationComponent = React.createElement(p.documentationComponent, { displayName: p.displayName });
       }
     }
 

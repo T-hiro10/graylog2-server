@@ -64,6 +64,7 @@ import {
   newDashboardsPath,
   showDashboardsPath,
   showViewsPath,
+  showSearchPath,
   viewsPath,
 } from 'views/Constants';
 import NewDashboardPage from 'views/pages/NewDashboardPage';
@@ -88,6 +89,7 @@ const enableNewSearch = AppConfig.isFeatureEnabled('search_3_2');
 const searchRoutes = enableNewSearch
   ? [
     { path: newDashboardsPath, component: NewDashboardPage, parentComponent: AppWithExtendedSearchBar },
+    { path: showSearchPath, component: ShowViewPage, parentComponent: AppWithExtendedSearchBar },
     { path: dashboardsTvPath, component: ShowDashboardInBigDisplayMode, parentComponent: null },
     { path: Routes.stream_search(':streamId'), component: StreamSearchPage, parentComponent: AppWithExtendedSearchBar },
     { path: dashboardsPath, component: DashboardsPage },

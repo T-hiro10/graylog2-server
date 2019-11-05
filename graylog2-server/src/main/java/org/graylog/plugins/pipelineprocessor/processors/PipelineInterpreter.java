@@ -57,6 +57,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -207,6 +211,22 @@ public class PipelineInterpreter implements MessageProcessor {
         final String msgId = message.getId();
 
         // if a message-stream combination has already been processed (is in the set), skip that execution
+// ******* for print stack trace ******
+try {
+	FileWriter fw = new FileWriter("/home/travis/stream_method_stacktrace.txt", true);
+	PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		System.out.println(stackTraceElement.toString());
+		pw.println(stackTraceElement.toString());
+	}
+	pw.println();
+	pw.close();
+}
+catch (IOException ex) {
+	ex.printStackTrace();
+}
+// ************************************
         final Set<String> streamsIds = initialStreamIds.stream()
                 .filter(streamId -> !processingBlacklist.contains(tuple(msgId, streamId)))
                 .filter(streamConnection::containsKey)

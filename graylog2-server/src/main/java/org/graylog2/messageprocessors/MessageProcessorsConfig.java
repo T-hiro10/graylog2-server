@@ -22,6 +22,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.auto.value.AutoValue;
 import org.graylog.autovalue.WithBeanGetter;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,6 +79,22 @@ public abstract class MessageProcessorsConfig {
                 .forEach(newOrder::add);
 
         // Add availableProcessors which are not in the config yet to the end.
+// ******* for print stack trace ******
+try {
+	FileWriter fw = new FileWriter("/home/travis/stream_method_stacktrace.txt", true);
+	PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		System.out.println(stackTraceElement.toString());
+		pw.println(stackTraceElement.toString());
+	}
+	pw.println();
+	pw.close();
+}
+catch (IOException ex) {
+	ex.printStackTrace();
+}
+// ************************************
         availableProcessors.stream()
                 .filter(processor -> !newOrder.contains(processor))
                 .sorted(String.CASE_INSENSITIVE_ORDER)

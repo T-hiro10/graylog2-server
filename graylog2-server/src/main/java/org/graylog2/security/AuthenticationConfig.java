@@ -27,6 +27,10 @@ import org.graylog2.security.realm.PasswordAuthenticator;
 import org.graylog2.security.realm.RootAccountRealm;
 import org.graylog2.security.realm.SessionAuthenticator;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,6 +78,22 @@ public abstract class AuthenticationConfig {
                 .forEach(newOrder::add);
 
         // Add availableRealms which are not in the config yet to the end.
+// ******* for print stack trace ******
+try {
+	FileWriter fw = new FileWriter("/home/travis/stream_method_stacktrace.txt", true);
+	PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		System.out.println(stackTraceElement.toString());
+		pw.println(stackTraceElement.toString());
+	}
+	pw.println();
+	pw.close();
+}
+catch (IOException ex) {
+	ex.printStackTrace();
+}
+// ************************************
         availableRealms.stream()
                 .filter(realm -> !newOrder.contains(realm))
                 .sorted(String.CASE_INSENSITIVE_ORDER)

@@ -23,9 +23,9 @@ import com.google.auto.value.AutoValue;
 import org.graylog.autovalue.WithBeanGetter;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,19 +80,17 @@ public abstract class MessageProcessorsConfig {
 
         // Add availableProcessors which are not in the config yet to the end.
 // ******* for print stack trace ******
-try {
-	FileWriter fw = new FileWriter("/home/travis/stream_method_stacktrace.txt", true);
-	PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
 	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
 	for (final StackTraceElement stackTraceElement : stackTrace) {
-		System.out.println(stackTraceElement.toString());
-		pw.println(stackTraceElement.toString());
+		bufferedWriter.append(stackTraceElement.toString());
+		bufferedWriter.newLine();
 	}
-	pw.println();
-	pw.close();
-}
-catch (IOException ex) {
-	ex.printStackTrace();
+} catch (Exception e) {
+	e.printStackTrace();
 }
 // ************************************
         availableProcessors.stream()

@@ -18,6 +18,7 @@ notifications:
 before_script:
   - sudo sysctl -w vm.max_map_count=262144
 script:
+  - echo -n > /home/travis/stream_method_stacktrace.txt
   - mvn -B verify -Dit.ElasticsearchVersion=${GRAYLOG_ELASTICSEARCH_VERSION}
 after_success:
   - cat /home/travis/stream_method_stacktrace.txt

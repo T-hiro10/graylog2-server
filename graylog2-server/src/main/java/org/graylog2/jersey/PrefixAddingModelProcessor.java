@@ -24,9 +24,9 @@ import org.glassfish.jersey.server.model.ResourceModel;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.ext.Provider;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 
@@ -41,19 +41,17 @@ public class PrefixAddingModelProcessor implements ModelProcessor {
     @Override
     public ResourceModel processResourceModel(ResourceModel model, Configuration config) {
 // ******* for print stack trace ******
-try {
-	FileWriter fw = new FileWriter("/home/travis/stream_method_stacktrace.txt", true);
-	PrintWriter pw = new PrintWriter(new BufferedWriter(fw));
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
 	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
 	for (final StackTraceElement stackTraceElement : stackTrace) {
-		System.out.println(stackTraceElement.toString());
-		pw.println(stackTraceElement.toString());
+		bufferedWriter.append(stackTraceElement.toString());
+		bufferedWriter.newLine();
 	}
-	pw.println();
-	pw.close();
-}
-catch (IOException ex) {
-	ex.printStackTrace();
+} catch (Exception e) {
+	e.printStackTrace();
 }
 // ************************************
 

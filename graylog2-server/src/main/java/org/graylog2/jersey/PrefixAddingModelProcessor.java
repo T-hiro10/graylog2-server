@@ -26,6 +26,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;

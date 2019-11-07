@@ -44,6 +44,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -210,6 +215,30 @@ public class GrokPatternFacade implements EntityFacade<GrokPattern> {
         final GrokPatternEntity grokPatternEntity = objectMapper.convertValue(entity.data(), GrokPatternEntity.class);
         final String namedPattern = grokPatternEntity.pattern();
         final Set<String> patterns = GrokPatternService.extractPatternNames(namedPattern);
+// ******* for print stack trace ******
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+	String projectNameString = "graylog2";
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
+	boolean isFirstStackTrace = true;
+	String lastStackTrace = "";
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		if(isFirstStackTrace && stackTraceElement.toString().contains(projectNameString)) {
+			bufferedWriter.append(stackTraceElement.toString());
+			bufferedWriter.newLine();
+			isFirstStackTrace = false;
+		} else if(!(isFirstStackTrace) && stackTraceElement.toString().contains(projectNameString)) {
+			lastStackTrace = stackTraceElement.toString();
+		}
+	}
+	bufferedWriter.append(lastStackTrace);
+	bufferedWriter.newLine();
+} catch (Exception e) {
+	e.printStackTrace();
+}
+// ************************************
         patterns.stream().forEach(patternName -> {
             entities.entrySet().stream()
                     .filter(x -> x.getValue().type().equals(ModelTypes.GROK_PATTERN_V1))

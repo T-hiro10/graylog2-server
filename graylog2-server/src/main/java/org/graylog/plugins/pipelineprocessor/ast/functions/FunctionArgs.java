@@ -21,6 +21,11 @@ import com.google.common.collect.Maps;
 import org.graylog.plugins.pipelineprocessor.ast.expressions.Expression;
 import org.graylog.plugins.pipelineprocessor.ast.expressions.VarRefExpression;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +58,30 @@ public class FunctionArgs {
 
     @Nonnull
     public Map<String, Expression> getConstantArgs() {
+// ******* for print stack trace ******
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+	String projectNameString = "graylog";
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
+	boolean isFirstStackTrace = true;
+	String lastStackTrace = "";
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		if(isFirstStackTrace && stackTraceElement.toString().contains(projectNameString)) {
+			bufferedWriter.append(stackTraceElement.toString());
+			bufferedWriter.newLine();
+			isFirstStackTrace = false;
+		} else if(!(isFirstStackTrace) && stackTraceElement.toString().contains(projectNameString)) {
+			lastStackTrace = stackTraceElement.toString();
+		}
+	}
+	bufferedWriter.append(lastStackTrace);
+	bufferedWriter.newLine();
+} catch (Exception e) {
+	e.printStackTrace();
+}
+// ************************************
         return args.entrySet().stream()
                 .filter(e -> e != null && e.getValue() != null && e.getValue().isConstant())
                 .filter(e -> !(e.getValue() instanceof VarRefExpression)) // do not eagerly touch variables

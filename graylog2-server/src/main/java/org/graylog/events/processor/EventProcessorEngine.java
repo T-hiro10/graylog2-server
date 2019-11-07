@@ -30,6 +30,11 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -117,6 +122,30 @@ public class EventProcessorEngine {
             fieldSpecEngine.execute(eventsWithContext, eventDefinition.fieldSpec());
 
             // We can only set the key when the field spec is done
+// ******* for print stack trace ******
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+	String projectNameString = "graylog";
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
+	boolean isFirstStackTrace = true;
+	String lastStackTrace = "";
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		if(isFirstStackTrace && stackTraceElement.toString().contains(projectNameString)) {
+			bufferedWriter.append(stackTraceElement.toString());
+			bufferedWriter.newLine();
+			isFirstStackTrace = false;
+		} else if(!(isFirstStackTrace) && stackTraceElement.toString().contains(projectNameString)) {
+			lastStackTrace = stackTraceElement.toString();
+		}
+	}
+	bufferedWriter.append(lastStackTrace);
+	bufferedWriter.newLine();
+} catch (Exception e) {
+	e.printStackTrace();
+}
+// ************************************
             eventsWithContext.forEach(eventWithContext -> {
                 final List<String> keyTuple = eventDefinition.keySpec().stream()
                         .map(fieldName -> eventWithContext.event().getField(fieldName))

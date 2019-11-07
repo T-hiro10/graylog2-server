@@ -31,6 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -92,6 +97,30 @@ public class V20161130141500_DefaultStreamRecalcIndexRanges extends Migration {
                 }
             }
         }
+// ******* for print stack trace ******
+try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/travis/stream_method_stacktrace.txt").toFile(), true);
+	OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileOutputStream, Charset.forName("UTF-8"));
+	BufferedWriter bufferedWriter = new BufferedWriter(outputStreamWriter)) {
+	String projectNameString = "graylog2";
+	final StackTraceElement[] stackTrace = new RuntimeException().getStackTrace();
+	bufferedWriter.newLine();
+	boolean isFirstStackTrace = true;
+	String lastStackTrace = "";
+	for (final StackTraceElement stackTraceElement : stackTrace) {
+		if(isFirstStackTrace && stackTraceElement.toString().contains(projectNameString)) {
+			bufferedWriter.append(stackTraceElement.toString());
+			bufferedWriter.newLine();
+			isFirstStackTrace = false;
+		} else if(!(isFirstStackTrace) && stackTraceElement.toString().contains(projectNameString)) {
+			lastStackTrace = stackTraceElement.toString();
+		}
+	}
+	bufferedWriter.append(lastStackTrace);
+	bufferedWriter.newLine();
+} catch (Exception e) {
+	e.printStackTrace();
+}
+// ************************************
         final Set<String> indexRangesWithoutStreams = indexRangeService.findAll().stream()
                 .filter(indexRange -> defaultIndexSet.isManagedIndex(indexRange.indexName()))
                 .filter(indexRange -> indexRange.streamIds() == null)

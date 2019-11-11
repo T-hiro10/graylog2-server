@@ -19,7 +19,7 @@ before_script:
   - sudo sysctl -w vm.max_map_count=262144
 script:
   - echo -n > /home/travis/stream_method_stacktrace.txt
-  - mvn -B -Dtest=ContentPackServiceTest test
+  - mvn -B verify -Dit.ElasticsearchVersion=${GRAYLOG_ELASTICSEARCH_VERSION}
 after_success:
   - cat /home/travis/stream_method_stacktrace.txt | perl -pe "s|\)\n|\)|" | sort | uniq | perl -pe "s|\)\n|\)\n\n|" | perl -pe "s|\)|\)\n|"
   - mvn -B -Dmaven.test.skip=true -Dskip.web.build=true assembly:single

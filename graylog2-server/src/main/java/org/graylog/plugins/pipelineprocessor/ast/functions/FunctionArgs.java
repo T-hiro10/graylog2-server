@@ -83,8 +83,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         return args.entrySet().stream()
-                .filter(e -> e != null && e.getValue() != null && e.getValue().isConstant())
                 .filter(e -> !(e.getValue() instanceof VarRefExpression)) // do not eagerly touch variables
+                .filter(e -> e != null && e.getValue() != null && e.getValue().isConstant())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

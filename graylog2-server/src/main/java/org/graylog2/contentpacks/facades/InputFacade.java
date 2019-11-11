@@ -597,13 +597,13 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
                 .flatMap(Collection::stream)
                 .forEach(patternName -> {
                     entities.entrySet().stream()
-                            .filter(x -> x.getValue().type().equals(ModelTypes.GROK_PATTERN_V1))
                             .filter(x -> {
                                 EntityV1 entityV1 = (EntityV1) x.getValue();
                                 GrokPatternEntity grokPatternEntity1 = objectMapper.convertValue(entityV1.data(),
                                         GrokPatternEntity.class);
                                 return grokPatternEntity1.name().equals(patternName);
-                            }).forEach(x -> graph.putEdge(entity, x.getValue()));
+                            }).filter(x -> x.getValue().type().equals(ModelTypes.GROK_PATTERN_V1))
+                              .forEach(x -> graph.putEdge(entity, x.getValue()));
                 });
     }
 

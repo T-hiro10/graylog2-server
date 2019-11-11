@@ -122,8 +122,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         final Set<String> indexRangesWithoutStreams = indexRangeService.findAll().stream()
-                .filter(indexRange -> defaultIndexSet.isManagedIndex(indexRange.indexName()))
                 .filter(indexRange -> indexRange.streamIds() == null)
+                .filter(indexRange -> defaultIndexSet.isManagedIndex(indexRange.indexName()))
                 .map(IndexRange::indexName)
                 .collect(Collectors.toSet());
 

@@ -105,8 +105,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         availableProcessors.stream()
-                .filter(processor -> !newOrder.contains(processor))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
+                .filter(processor -> !newOrder.contains(processor))
                 .forEach(newOrder::add);
 
         return toBuilder().processorOrder(newOrder).build();

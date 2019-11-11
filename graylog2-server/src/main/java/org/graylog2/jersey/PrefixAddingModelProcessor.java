@@ -73,8 +73,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
                 final String packageName = handlerClass.getPackage().getName();
 
                 final Optional<String> packagePrefix = packagePrefixes.entrySet().stream()
-                        .filter(entry -> packageName.startsWith(entry.getKey()))
                         .sorted((o1, o2) -> -o1.getKey().compareTo(o2.getKey()))
+                        .filter(entry -> packageName.startsWith(entry.getKey()))
                         .map(Map.Entry::getValue)
                         .findFirst();
 

@@ -104,8 +104,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         availableRealms.stream()
-                .filter(realm -> !newOrder.contains(realm))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
+                .filter(realm -> !newOrder.contains(realm))
                 .forEach(newOrder::add);
 
         return toBuilder().realmOrder(newOrder).build();

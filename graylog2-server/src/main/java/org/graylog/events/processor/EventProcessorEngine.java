@@ -149,8 +149,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
             eventsWithContext.forEach(eventWithContext -> {
                 final List<String> keyTuple = eventDefinition.keySpec().stream()
                         .map(fieldName -> eventWithContext.event().getField(fieldName))
-                        .filter(Objects::nonNull)
                         .filter(fieldValue -> !fieldValue.isError())
+                        .filter(Objects::nonNull)
                         .map(FieldValue::value)
                         .collect(Collectors.toList());
 

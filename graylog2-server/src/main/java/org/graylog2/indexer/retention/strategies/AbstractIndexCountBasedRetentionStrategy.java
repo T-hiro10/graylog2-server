@@ -115,9 +115,9 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 // ************************************
 
         final Set<String> orderedIndices = Arrays.stream(indexSet.getManagedIndices())
+            .sorted((indexName1, indexName2) -> indexSet.extractIndexNumber(indexName2).orElse(0).compareTo(indexSet.extractIndexNumber(indexName1).orElse(0)))
             .filter(indexName -> !indices.isReopened(indexName))
             .filter(indexName -> !(deflectorIndices.getOrDefault(indexName, Collections.emptySet()).contains(indexSet.getWriteIndexAlias())))
-            .sorted((indexName1, indexName2) -> indexSet.extractIndexNumber(indexName2).orElse(0).compareTo(indexSet.extractIndexNumber(indexName1).orElse(0)))
             .collect(Collectors.toCollection(LinkedHashSet::new));
         orderedIndices
             .stream()

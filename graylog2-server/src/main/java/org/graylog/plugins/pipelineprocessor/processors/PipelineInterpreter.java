@@ -237,8 +237,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         final Set<String> streamsIds = initialStreamIds.stream()
-                .filter(streamId -> !processingBlacklist.contains(tuple(msgId, streamId)))
                 .filter(streamConnection::containsKey)
+                .filter(streamId -> !processingBlacklist.contains(tuple(msgId, streamId)))
                 .collect(Collectors.toSet());
         final ImmutableSet<Pipeline> pipelinesToRun = streamsIds.stream()
                 .flatMap(streamId -> streamConnection.get(streamId).stream())

@@ -422,8 +422,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
 }
 // ************************************
         final Set<Entity> unexpectedEntities = dependencyGraph.nodes().stream()
-                .filter(entity -> !rootEntity.equals(entity))
                 .filter(entity -> !entities.contains(entity))
+                .filter(entity -> !rootEntity.equals(entity))
                 .collect(Collectors.toSet());
 
         if (!unexpectedEntities.isEmpty()) {

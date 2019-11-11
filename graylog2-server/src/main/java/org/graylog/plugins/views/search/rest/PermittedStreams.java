@@ -71,8 +71,8 @@ try (FileOutputStream fileOutputStream = new FileOutputStream(Paths.get("/home/t
                 // Having the event indices in every search, makes sorting almost impossible
                 // because it triggers https://github.com/Graylog2/graylog2-server/issues/6378
                 // TODO: this filter can be removed, once we implement https://github.com/Graylog2/graylog2-server/issues/6490
-                .filter(id -> !DEFAULT_EVENT_STREAM_IDS.contains(id))
                 .filter(isStreamIdPermitted)
+                .filter(id -> !DEFAULT_EVENT_STREAM_IDS.contains(id))
                 .collect(toSet());
 
         if (result.isEmpty())
